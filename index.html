@@ -70,6 +70,16 @@
   .phon h3{font-family:Fredoka,system-ui,sans-serif;font-weight:600;font-size:17px;margin:0 0 4px;color:var(--ink);display:flex;align-items:center;gap:8px}
   .phon h3 .n{width:24px;height:24px;border-radius:50%;background:var(--honey);display:grid;place-items:center;font-size:14px}
   .phon .hint{font-size:13px;color:var(--muted);margin:0 0 12px}
+  .phon.star{border:3px solid var(--honey);box-shadow:0 6px 0 #f3d27a;padding:16px 14px}
+  .phon.star h3{font-size:19px;flex-wrap:wrap;justify-content:center;text-align:center}
+  .phon.star h3 small{display:block;width:100%;font-size:13px;color:var(--muted);font-weight:500}
+  .how{margin:6px 0 12px;padding:10px 12px 10px 30px;background:var(--honey-soft);border-radius:14px;font-size:14px;line-height:1.55;color:var(--ink)}
+  .how li{margin:2px 0}.how b{color:var(--ikb)}.how .ex{white-space:nowrap;font-family:Andika,system-ui,sans-serif}
+  .pbtns{display:flex;gap:8px;margin-top:14px}
+  .pbtns .btn{flex:1;justify-content:center;font-size:16px;padding:13px 10px}
+  .btn.guide{background:var(--ikb);color:#fff;box-shadow:0 4px 0 #001f6e}
+  .phon.star .sb{min-width:72px;height:88px;font-size:38px}
+  .cliptext .say{display:block;font-family:Fredoka,system-ui,sans-serif;font-weight:700;font-size:20px;color:var(--ikb)}
   .sbx{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
   .sb{position:relative;min-width:64px;height:78px;border-radius:16px;border:2px solid var(--sky2);background:#fff;display:flex;align-items:flex-end;justify-content:center;padding:0 10px 10px;font-family:Andika,system-ui,sans-serif;font-size:34px;color:var(--ink);cursor:pointer;transition:transform .12s}
   .sb::before{content:"";position:absolute;top:10px;left:50%;width:12px;height:12px;margin-left:-6px;border-radius:50%;background:var(--ikb)}
@@ -80,7 +90,7 @@
   .sb.song::after{content:"🔊";position:absolute;right:4px;bottom:2px;font-size:11px}
   .cliptext{min-height:40px;text-align:center;font-size:15px;color:var(--ink);background:var(--sky);border-radius:12px;padding:8px 10px;margin:0 0 12px;line-height:1.35}
   .cliptext b{color:#E0436A;font-family:Fredoka,system-ui,sans-serif;font-weight:600}
-  .blend{margin-top:14px;width:100%;justify-content:center;background:var(--honey);color:var(--ink)}
+  .blend{background:var(--honey);color:var(--ink);box-shadow:0 4px 0 #d9a514}
   .blendword{text-align:center;font-family:Fredoka,system-ui,sans-serif;font-weight:700;font-size:40px;color:var(--ikb);height:0;overflow:hidden;opacity:0;transition:all .25s}
   .blendword.show{height:62px;line-height:60px;opacity:1;margin-top:6px}
   .tip{font-size:12px;color:var(--muted);text-align:center;margin-top:8px}
@@ -276,26 +286,30 @@ function drawPage(p){
     ${p.words.map((w,k)=>`
       <div class="card${p.single?' big':''}" data-k="${k}">
         <img src="${src(w.img)}" alt="">
-        <div class="info"><div class="word">${esc(w.w)}</div><div class="text">${markText(w)}</div><button class="listen" type="button"><span class="li">${PLAY}</span> Listen</button>${w.link?`<a class="practice" href="#${w.link}" onclick="event.stopPropagation()">${p.vocab ? "🔁 3번 따라 말하기 ›" : "🔁 3번 따라 말하기 + 🔤 소리 하나씩 듣기 ›"}</a>`:""}${w.q?`<button class="q" data-q="${k}"><span class="qp">▶</span> ${esc(w.q)} <span>Yes / No</span></button>`:""}</div>
+        <div class="info"><div class="word">${esc(w.w)}</div><div class="text">${markText(w)}</div><button class="listen" type="button"><span class="li">${PLAY}</span> Listen</button>${w.link?`<a class="practice" href="#${w.link}" onclick="event.stopPropagation()">${p.vocab ? "🔁 3번 따라 말하기 ›" : "🔤 소리 하나씩 듣고 합치기 + 🔁 3번 따라 말하기 ›"}</a>`:""}${w.q?`<button class="q" data-q="${k}"><span class="qp">▶</span> ${esc(w.q)} <span>Yes / No</span></button>`:""}</div>
       </div>`).join("")}
+    ${!p.hgroup && p.snd && p.snd.length ? `
+    <div class="phon star">
+      <h3><span class="n">1</span>소리 하나씩 듣고 합치기 <small>Sound it out &amp; blend</small></h3>
+      <ol class="how">
+        <li><b>소리 칸</b>을 왼쪽부터 하나씩 눌러 소리를 듣고, 아이가 <b>따라 말해요</b>.</li>
+        <li><b>▶ 같이 해 보기</b>를 누르면 소리 → 아이 차례 → 합치기가 차례로 나와요.</li>
+        <li>소리를 <b>천천히 길게 → 빠르게</b> 이어 말하면 단어가 돼요: <span class="ex">${p.snd.map(s=>esc(s.g)).join(" · ")} → <b>${esc(p.words[0].w)}</b></span></li>
+      </ol>
+      <div class="cliptext" id="ct">소리 칸을 눌러 보세요 👇</div>
+      <div class="sbx">${p.snd.map((s,k)=>`<div class="sb${s.h?' h':''}${s.clip?' song':''}" data-k="${k}">${esc(s.g)}</div>`).join("")}</div>
+      <div class="pbtns"><button class="btn guide" id="guide">▶ 같이 해 보기</button><button class="btn blend" id="blend">🔗 합치기만 듣기</button></div>
+      <div class="blendword" id="bw">${esc(p.words[0].w)}</div>
+      <div class="tip">${p.snd.some(s=>s.h)?'❤ 칸은 글자와 다르게 소리 나는 부분이에요. 눌러서 소리를 꼭 확인해 주세요.<br>':''}🔊 아이가르텐 파닉스 음원 · 알파벳 이름이 아니라 <b>소리</b>로 읽어요</div>
+    </div>` : ""}
     ${p.practice ? `
     <div class="rep">
-      <h3><span class="n">1</span>Listen and repeat 3 times</h3>
+      <h3><span class="n">${!p.hgroup && p.snd && p.snd.length ? 2 : 1}</span>Listen and repeat 3 times</h3>
       <button class="btn primary go" id="go">▶ Start</button>
       <div class="rstars"><svg class="rstar" viewBox="0 0 24 24"><path d="M12 2.6l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z" stroke-linejoin="round"/></svg><svg class="rstar" viewBox="0 0 24 24"><path d="M12 2.6l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z" stroke-linejoin="round"/></svg><svg class="rstar" viewBox="0 0 24 24"><path d="M12 2.6l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z" stroke-linejoin="round"/></svg></div>
       <div class="pnote">👍 아이가 잘 따라 하면 학부모님이 눌러 주세요</div>
       <div class="turn" id="turn"><div class="small">Press start and say the word after the voice!</div></div>
       <div class="ok" id="ok"><button class="again" id="again">🔁 다시 듣기</button><button class="yes" id="yes">👍 잘했어요!</button></div>
-    </div>` : ""}
-    ${!p.hgroup && p.snd && p.snd.length ? `
-    <div class="phon">
-      <h3><span class="n">2</span>Tap each sound</h3>
-      <p class="hint">Tap a box to hear its sound. Then press Blend!</p>
-      <div class="cliptext" id="ct">&nbsp;</div>
-      <div class="sbx">${p.snd.map((s,k)=>`<div class="sb${s.h?' h':''}${s.clip?' song':''}" data-k="${k}">${esc(s.g)}</div>`).join("")}</div>
-      <button class="btn blend" id="blend">🔗 Blend it</button>
-      <div class="blendword" id="bw">${esc(p.words[0].w)}</div>
-      <div class="tip">❤ = tricky part · 소리를 하나씩 듣고 합쳐서 읽어 보세요<br>🔊 = 아이가르텐 파닉스 음원</div>
     </div>` : ""}
     <div class="nav">
       <a href="#${prev?prev.id:''}" class="${prev?'':'hide'}">‹ ${lab(prev)}</a>
@@ -359,6 +373,31 @@ function drawPage(p){
       boxes.forEach(b=>b.classList.add("on")); bw.classList.add("show");
       await say(word, slow?0.6:0.8);
       await wait(400); lightOnly(-1);
+    };
+    document.getElementById("guide").onclick = async ()=>{
+      stopAll(); const t=queueToken; bw.classList.remove("show");
+      const word=p.words[0].w, n=boxes.length;
+      const show=(big,small)=>{ ct.innerHTML=`<span class="say">${big}</span>${small||""}`; };
+      for(let k=0;k<n;k++){
+        if(t!==queueToken) return; const s=p.snd[k];
+        show(`👂 ${k+1} / ${n}`, s.note?`<b>${esc(s.note)}</b>`:"듣고");
+        lightOnly(k); if(s.clip) await playClips(s.clip); else await say(s.say, 0.6);
+        if(t!==queueToken) return;
+        show("🗣 따라 말해요!", `“${esc(s.g)}” 소리`); await wait(1700);
+      }
+      if(t!==queueToken) return;
+      show("🔗 이제 합쳐요!", "천천히 길게 → 빠르게"); lightOnly(-1); await wait(700);
+      for(let pass=0; pass<2; pass++){
+        for(let k=0;k<n;k++){ if(t!==queueToken) return; const s=p.snd[k]; lightOnly(k); if(s.clip) await playClips(s.clip); else await say(s.say, pass?0.75:0.55); await wait(pass?100:400); }
+        lightOnly(-1); await wait(450);
+      }
+      if(t!==queueToken) return;
+      boxes.forEach(b=>b.classList.add("on")); bw.classList.add("show");
+      show(`✨ ${esc(word)}`, ""); await say(word, slow?0.6:0.8);
+      if(t!==queueToken) return;
+      show("🗣 이번엔 혼자 말해 봐요!", `“${esc(word)}”`); await wait(2200);
+      if(t!==queueToken) return; lightOnly(-1);
+      show("👍 잘했어요!", "아래에서 단어를 3번 따라 말해 봐요");
     };
   }
   document.getElementById("slow").onclick = e=>{ slow=!slow; e.currentTarget.classList.toggle("on",slow); };
