@@ -308,7 +308,7 @@ function drawPage(p){
       </ol></details>
       <div class="cliptext" id="ct">소리 칸을 눌러 보세요 👇</div>
       <div class="sbx">${p.snd.map((s,k)=>`<div class="sb${s.h?' h':''}${s.clip?' song':''}" data-k="${k}">${esc(s.g)}</div>`).join("")}</div>
-      <div class="pbtns"><button class="btn guide" id="guide">▶ 같이 해 보기</button><button class="btn blend" id="blend">🔗 합치기만 듣기</button></div>
+      <div class="pbtns"><button class="btn guide" id="guide">▶ 같이 해 보기</button></div>
       <div class="blendword" id="bw">${esc(p.words[0].w)}</div>
       <div class="tip">${p.snd.some(s=>s.h)?'❤ 칸은 글자와 다르게 소리 나는 부분이에요. 눌러서 소리를 꼭 확인해 주세요.<br>':''}🔊 아이가르텐 파닉스 음원 · 알파벳 이름이 아니라 <b>소리</b>로 읽어요</div>
     </div>` : ""}
@@ -372,18 +372,6 @@ function drawPage(p){
       if(s.clip) await playClips(s.clip); else await say(s.say, slow?0.55:0.7);
     };
     boxes.forEach(b=>b.addEventListener("click", async ()=>{ stopAll(); const t=queueToken; bw.classList.remove("show"); await tapSound(+b.dataset.k); if(t===queueToken) setTimeout(()=>lightOnly(-1),300); }));
-    document.getElementById("blend").onclick = async ()=>{
-      stopAll(); const t=queueToken; bw.classList.remove("show"); ct.innerHTML="&nbsp;";
-      const word=p.words[0].w;
-      const unit = async (k, r) => { const s=p.snd[k]; lightOnly(k); if(s.clip) await playClips(s.clip); else await say(s.say, r); };
-      for(let pass=0; pass<2; pass++){
-        for(let k=0;k<boxes.length;k++){ if(t!==queueToken) return; await unit(k, pass?0.7:0.55); await wait(pass?120:450); }
-        lightOnly(-1); if(t!==queueToken) return; await wait(500);
-      }
-      boxes.forEach(b=>b.classList.add("on")); bw.classList.add("show");
-      await say(word, slow?0.6:0.8);
-      await wait(400); lightOnly(-1);
-    };
     document.getElementById("guide").onclick = async ()=>{
       stopAll(); const t=queueToken; bw.classList.remove("show");
       const word=p.words[0].w, n=boxes.length;
