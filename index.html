@@ -35,6 +35,8 @@
   .slowtip{font-size:12px;color:var(--muted)}.slowtip.on{color:var(--ink);font-weight:600}
   .act{margin-top:10px;background:#EFFAF4;border:2px dashed #7FD1AE;border-radius:14px;padding:8px 12px;font-size:15px;color:var(--ink);text-align:center}
   .act b{color:#1F8A5B}
+  .qsec .qhint{font-size:14px;color:var(--muted);margin:2px 0 10px}.qsec .qhint b{color:var(--ikb)}
+  .q.qbig{font-size:18px;padding:12px 16px;border-radius:16px}.q.qbig .qp{width:30px;height:30px;font-size:13px}
   .qbox{margin-top:12px;padding-top:10px;border-top:2px dashed var(--line);text-align:center}
   .qbox .ql{font-size:12px;color:var(--muted);margin-bottom:4px}
   .card .practice{margin-top:8px}
@@ -296,7 +298,7 @@ function drawPage(p){
     ${p.words.map((w,k)=>`
       <div class="card${p.single?' big':''}" data-k="${k}">
         <img src="${src(w.img)}" alt="">
-        <div class="info"><div class="word">${esc(w.w)}</div><div class="text">${markText(w)}</div><button class="listen" type="button"><span class="li">${PLAY}</span> Listen</button>${w.link?`<a class="practice" href="#${w.link}" onclick="event.stopPropagation()">${p.vocab ? "🔁 3번 따라 말하기 ›" : "🔤 소리 하나씩 듣고 합치기 + 🔁 3번 따라 말하기 ›"}</a>`:""}${w.act?`<div class="act">🎭 <b>몸으로 표현해요:</b> ${esc(w.act)}</div>`:""}${w.q?`<div class="qbox"><div class="ql">❓ 질문 듣고 대답하기</div><button class="q" data-q="${k}"><span class="qp">▶</span> ${esc(w.q)} <span>Yes / No</span></button></div>`:""}</div>
+        <div class="info"><div class="word">${esc(w.w)}</div><div class="text">${markText(w)}</div><button class="listen" type="button"><span class="li">${PLAY}</span> Listen</button>${w.link?`<a class="practice" href="#${w.link}" onclick="event.stopPropagation()">${p.vocab ? "🔁 3번 따라 말하기 ›" : "🔤 소리 하나씩 듣고 합치기 + 🔁 3번 따라 말하기 ›"}</a>`:""}${w.act?`<div class="act">🎭 <b>몸으로 표현해요:</b> ${esc(w.act)}</div>`:""}${w.q && !p.wsingle?`<div class="qbox"><div class="ql">❓ 질문 듣고 대답하기</div><button class="q" data-q="${k}"><span class="qp">▶</span> ${esc(w.q)} <span>Yes / No</span></button></div>`:""}</div>
       </div>`).join("")}
     ${!p.hgroup && p.snd && p.snd.length ? `
     <div class="phon star">
@@ -320,6 +322,12 @@ function drawPage(p){
       <div class="pnote">👍 3번 다 따라 하면 학부모님이 한 번만 눌러 주세요</div>
       <div class="turn" id="turn"><div class="small">Press start and say the word after the voice!</div></div>
       <div class="ok" id="ok"><button class="again" id="again">🔁 다시 하기</button><button class="yes" id="yes">👍 잘했어요!</button></div>
+    </div>` : ""}
+    ${p.wsingle && p.words[0].q ? `
+    <div class="rep qsec">
+      <h3><span class="n">2</span>질문 듣고 대답하기</h3>
+      <p class="qhint">▶를 눌러 질문을 듣고 <b>Yes!</b> 또는 <b>No!</b>로 대답해요</p>
+      <button class="q qbig" data-q="0"><span class="qp">▶</span> ${esc(p.words[0].q)} <span>Yes / No</span></button>
     </div>` : ""}
     <div class="nav">
       <a href="#${prev?prev.id:''}" class="${prev?'':'hide'}">‹ ${lab(prev)}</a>
