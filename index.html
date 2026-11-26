@@ -493,11 +493,7 @@ function renderSong(p){
     </div>
     <div class="phon star" id="step2">
       <h3><span class="n">2</span>소리 하나씩 듣고 합치기 <small>Sound it out &amp; blend</small></h3>
-      <details class="howd"><summary>📖 학부모님 설명 보기</summary><ol class="how">
-        <li>노래에 나온 단어를 <b>소리 하나씩</b> 듣고 아이가 <b>따라 말해요</b>.</li>
-        <li><b>▶ 같이 해 보기</b>를 누르면 소리 → 아이 차례 → 합치기 → 단어 말하기가 차례로 나와요.</li>
-        <li>아이가 혼자 단어를 말하면 <b>👍 잘했어요!</b>를 눌러 칭찬해 주세요.</li>
-      </ol></details>
+      
       <div class="wtabs" id="wt">${p.words.map((w,k)=>`<button type="button" class="wtab${k===0?' on':''}" data-w="${k}">${w.main?'🎵 ':''}${esc(w.w)}<i class="ws" id="ws${k}"></i></button>`).join("")}</div>
       <div class="cliptext" id="ct">소리 칸을 눌러 보세요 👇</div>
       <div class="sbx" id="sbx"></div>
