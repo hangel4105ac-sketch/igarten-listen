@@ -449,8 +449,15 @@ function parentCheck(box, msgHtml){
   });
 }
 
+function setMode(song){
+  document.title = song ? "Phonics Song · Listen" : "Wonders Words to Know · Listen";
+  const ns=document.querySelectorAll(".wrap > .note");
+  if(ns[0]) ns[0].style.display = song ? "none" : "";
+  if(ns[1]) ns[1].textContent = song ? "🎵 Phonics Song 듣기 페이지" : "🔒 Wonders Words to Know 듣기 페이지";
+}
 function renderSong(p){
   CUR = p.id;
+  setMode(true);
   document.getElementById("title").textContent = "🎵 " + p.title + " Song";
   document.getElementById("sub").textContent = "Phonics Song · " + p.grp;
   document.getElementById("chips").innerHTML = '<span class="chip wtk">노래 듣고 소리 합치기</span>';
@@ -583,8 +590,8 @@ function route(){
   let id = location.hash.replace("#","");
   if(!id && START){ id = START; START = ""; }
   CUR = "";
-  if(id==="sounds") { renderSounds(); window.scrollTo(0,0); return; }
-  if(byId[id] && byId[id].song) renderSong(byId[id]); else if(byId[id]) renderPage(byId[id]); else renderHome();
+  setMode(false); if(id==="sounds") { renderSounds(); window.scrollTo(0,0); return; }
+  setMode(false); if(byId[id] && byId[id].song) renderSong(byId[id]); else if(byId[id]) renderPage(byId[id]); else renderHome();
   window.scrollTo(0,0);
 }
 window.addEventListener("hashchange", route);
