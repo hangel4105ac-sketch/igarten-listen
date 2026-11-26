@@ -30,7 +30,19 @@
   .chip{font-family:Fredoka,system-ui,sans-serif;font-weight:600;font-size:13px;padding:5px 11px;border-radius:999px;background:rgba(255,255,255,.16)}
   .chip.hfw{background:var(--honey);color:var(--ink)}
   .chip.wtk{background:#fff;color:var(--ikb)}
-  .controls{display:flex;gap:10px;margin:18px 0 6px;align-items:center}
+  .controls{display:flex;gap:10px;margin:14px 0 2px;align-items:center;justify-content:flex-end}
+  .controls .btn{padding:8px 14px;font-size:15px}
+  .listen{display:inline-flex;align-items:center;justify-content:center;gap:8px;margin-top:10px;border:0;cursor:pointer;
+    background:var(--honey);color:var(--ink);font-family:Fredoka,system-ui,sans-serif;font-weight:700;font-size:17px;
+    border-radius:999px;padding:10px 22px;box-shadow:0 4px 0 #d9a514}
+  .listen .li{width:26px;height:26px;border-radius:50%;background:var(--ikb);display:grid;place-items:center}
+  .listen .li svg{width:12px;height:12px;fill:#fff;margin-left:2px}
+  .listen:active{transform:translateY(2px);box-shadow:0 2px 0 #d9a514}
+  .card.playing .listen{background:var(--ikb);color:#fff;box-shadow:0 4px 0 #001f6e}
+  .card.playing .listen .li{background:#fff}.card.playing .listen .li svg{fill:var(--ikb)}
+  .card.big .listen{display:flex;width:100%;font-size:20px;padding:14px 22px;margin:12px 0 4px}
+  .card.big .listen .li{width:32px;height:32px}.card.big .listen .li svg{width:14px;height:14px}
+  .card.big .practice{display:block;background:#fff;color:var(--ikb);border:2px solid var(--sky2)}
   .btn{border:0;border-radius:16px;font-family:Fredoka,system-ui,sans-serif;font-weight:600;font-size:16px;padding:12px 16px;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
   .btn.primary{background:var(--ikb);color:#fff;flex:1;justify-content:center;box-shadow:0 6px 16px rgba(0,47,167,.25)}
   .btn.ghost{background:#fff;color:var(--ikb);border:2px solid var(--sky2)}
@@ -259,14 +271,12 @@ function drawPage(p){
   const m = document.getElementById("main");
   m.innerHTML = `
     <div class="controls">
-      <button class="btn primary" id="all">${PLAY.replace('<svg','<svg style="width:18px;height:18px;fill:#fff"')} Play all</button>
       <button class="btn ghost ${slow?'on':''}" id="slow">🐢 Slow</button>
     </div>
     ${p.words.map((w,k)=>`
       <div class="card${p.single?' big':''}" data-k="${k}">
         <img src="${src(w.img)}" alt="">
-        <div class="info"><div class="word">${esc(w.w)}</div><div class="text">${markText(w)}</div>${w.link?`<a class="practice" href="#${w.link}" onclick="event.stopPropagation()">${p.vocab ? "🔁 3번 따라 하기 ›" : "👆 소리 짚기 · 🔁 3번 따라 하기 ›"}</a>`:""}${w.q?`<button class="q" data-q="${k}"><span class="qp">▶</span> ${esc(w.q)} <span>Yes / No</span></button>`:""}</div>
-        <div class="play">${PLAY}</div>
+        <div class="info"><div class="word">${esc(w.w)}</div><div class="text">${markText(w)}</div><button class="listen" type="button"><span class="li">${PLAY}</span> Listen</button>${w.link?`<a class="practice" href="#${w.link}" onclick="event.stopPropagation()">${p.vocab ? "🔁 3번 따라 하기 ›" : "👆 소리 짚기 · 🔁 3번 따라 하기 ›"}</a>`:""}${w.q?`<button class="q" data-q="${k}"><span class="qp">▶</span> ${esc(w.q)} <span>Yes / No</span></button>`:""}</div>
       </div>`).join("")}
     ${p.practice ? `
     <div class="rep">
@@ -301,10 +311,6 @@ function drawPage(p){
   m.querySelectorAll(".card").forEach(c=>c.addEventListener("click",()=>{
     stopAll(); const t=queueToken; playWord(p.words[+c.dataset.k], c, t);
   }));
-  document.getElementById("all").onclick = async ()=>{
-    stopAll(); const t=queueToken; const cards=[...m.querySelectorAll(".card")];
-    for(let k=0;k<cards.length;k++){ if(t!==queueToken) return; await playWord(p.words[k], cards[k], t); await wait(500); }
-  };
   if(p.practice){
     const stars=[...m.querySelectorAll(".rstar")], turn=document.getElementById("turn"), ok=document.getElementById("ok"), go=document.getElementById("go");
     const w=p.words[0].w;
