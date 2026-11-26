@@ -472,6 +472,7 @@ function renderSongs(){
 function renderSong(p){
   CUR = p.id;
   setMode(true);
+  if(!LOADED[p.id]){ fetch("a/"+p.id+".json").then(r=>r.json()).then(r=>{ loadPack().then(()=>Object.assign(PACK, r.aud||{})); LOADED[p.id]=1; }).catch(()=>{}); }
   document.getElementById("title").textContent = "🎵 " + p.title + " Song";
   document.getElementById("sub").textContent = "Phonics Song · " + p.grp;
   document.getElementById("chips").innerHTML = '<span class="chip wtk">노래 듣고 소리 합치기</span>';
