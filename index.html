@@ -328,7 +328,7 @@ function drawPage(p){
       <div class="sbx">${p.snd.map((s,k)=>`<div class="sb${s.h?' h':''}${s.clip?' song':''}" data-k="${k}">${esc(s.g)}</div>`).join("")}</div>
       <div class="pbtns"><button class="btn guide" id="guide">▶ 같이 해 보기</button></div>
       <div class="blendword" id="bw">${esc(p.words[0].w)}</div>
-      <div class="tip">${p.snd.some(s=>s.h)?'❤ 칸은 글자와 다르게 소리 나는 부분이에요. 눌러서 소리를 꼭 확인해 주세요.<br>':''}🔊 아이가르텐 파닉스 음원 · 알파벳 이름이 아니라 <b>소리</b>로 읽어요</div>
+      <div class="tip">${p.snd.some(s=>s.h)?'❤ 칸은 글자와 다르게 소리 나는 부분이에요. 눌러서 소리를 꼭 확인해 주세요.<br>':''}알파벳 이름이 아니라 <b>소리</b>로 읽어요</div>
     </div>` : ""}
     ${p.practice ? `
     <div class="rep">
