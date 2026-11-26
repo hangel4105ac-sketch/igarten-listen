@@ -175,6 +175,14 @@
   .pcheck button{border:0;border-radius:999px;padding:10px 16px;font-size:16px;font-weight:700;cursor:pointer}
   .songlinks{display:flex;flex-wrap:wrap;gap:8px}
   .songlinks a{background:var(--honey);color:var(--ink);border-radius:999px;padding:8px 14px;text-decoration:none;font:700 16px Fredoka,system-ui,sans-serif}
+
+  .steps{display:flex;flex-wrap:nowrap;align-items:center;justify-content:center;gap:4px;margin-top:12px;font-size:13px;font-weight:700;color:var(--ikb)}
+  .steps span{background:#fff;border:2px solid var(--sky2);border-radius:999px;padding:3px 8px;white-space:nowrap}
+  .nav a{white-space:nowrap}
+  .steps i{font-style:normal;color:var(--muted)}
+  @keyframes nudge{0%,100%{transform:scale(1)}30%{transform:scale(1.06)}60%{transform:scale(.98)}}
+  .guide.nudge{animation:nudge .6s ease 3}
+  @media (prefers-reduced-motion:reduce){.guide.nudge{animation:none}}
 </style>
 </head>
 <body>
@@ -430,7 +438,7 @@ function drawPage(p){
 
 /* ===== Phonics Song: 노래 듣고 → 소리 합치기 → 엄마 칭찬 ===== */
 const SONGS = [
-  {id:"song-cat", title:"Cat", grp:"Short Vowels", focus:"a", video:"s/cat.mp4",
+  {id:"song-cat", title:"Cat", grp:"Short Vowels", focus:"a", video:"s/cat.mp4", poster:"phonics/cat.jpg",
    lyric:"c, a, and t is ‘cat’ · a in ‘cat’ is /a/",
    words:[
      {w:"cat", main:true, snd:[{g:"c",clip:"c"},{g:"a",clip:"a",f:true},{g:"t",clip:"t"}]},
@@ -455,6 +463,14 @@ function setMode(song){
   if(ns[0]) ns[0].style.display = song ? "none" : "";
   if(ns[1]) ns[1].textContent = song ? "🎵 Phonics Song 듣기 페이지" : "🔒 Wonders Words to Know 듣기 페이지";
 }
+function renderSongs(){
+  setMode(true);
+  document.getElementById("title").textContent = "🎵 Phonics Songs";
+  document.getElementById("sub").textContent = "노래 듣고 소리 합치기 · 노래를 골라요";
+  document.getElementById("chips").innerHTML = "";
+  const g={}; SONGS.forEach(x=>(g[x.grp]=g[x.grp]||[]).push(x));
+  document.getElementById("main").innerHTML = '<div class="home">'+Object.keys(g).map(k=>`<h2>${esc(k)}</h2><div class="songlinks">${g[k].map(x=>`<a href="#${x.id}">🎵 ${esc(x.title)}</a>`).join("")}</div>`).join("")+'</div>';
+}
 function renderSong(p){
   CUR = p.id;
   setMode(true);
@@ -462,18 +478,20 @@ function renderSong(p){
   document.getElementById("sub").textContent = "Phonics Song · " + p.grp;
   document.getElementById("chips").innerHTML = '<span class="chip wtk">노래 듣고 소리 합치기</span>';
   let wi = 0;
+  const si = SONGS.indexOf(p), prevS = SONGS[si-1], nextS = SONGS[si+1];
   const m = document.getElementById("main");
   m.innerHTML = `
     <div class="controls">
       <span class="slowtip" id="slowtip">${slow?'모든 소리와 따라 말할 시간이 천천히 나와요':'천천히 듣고 싶을 때 눌러요'}</span><button class="btn ghost ${slow?'on':''}" id="slow">🐢 천천히</button>
     </div>
+    <div class="steps"><span>① 노래 듣기</span><i>›</i><span>② 같이 해 보기</span><i>›</i><span>③ 말하면 👍</span></div>
     <div class="phon songbox">
-      <h3><span class="n">1</span>노래 듣고 따라 불러요 <small>Listen to the song</small></h3>
-      <video id="sv" src="${p.video}" controls playsinline preload="metadata"></video>
+      <h3><span class="n">1</span>노래 듣고 따라 불러요 <small>Listen</small></h3>
+      <video id="sv" src="${p.video}"${p.poster?` poster="${p.poster}"`:""} controls playsinline preload="metadata"></video>
       <div class="lyric">🎤 ${esc(p.lyric)}</div>
       <div class="tip">노래에 나오는 <b class="fx">/${esc(p.focus)}/</b> 소리를 잘 들어 보세요!</div>
     </div>
-    <div class="phon star">
+    <div class="phon star" id="step2">
       <h3><span class="n">2</span>소리 하나씩 듣고 합치기 <small>Sound it out &amp; blend</small></h3>
       <details class="howd"><summary>📖 학부모님 설명 보기</summary><ol class="how">
         <li>노래에 나온 단어를 <b>소리 하나씩</b> 듣고 아이가 <b>따라 말해요</b>.</li>
@@ -488,11 +506,22 @@ function renderSong(p){
       <div class="pcheck" id="pc"></div>
       <div class="tip"><span class="fdot"></span> 노란 칸이 노래에서 배운 소리예요 · 알파벳 이름이 아니라 <b>소리</b>로 읽어요</div>
     </div>
-    <div class="nav"><a href="#home">All pages</a></div>`;
+    <div class="nav">
+      <a href="#${prevS?prevS.id:''}" class="${prevS?'':'hide'}">‹ ${prevS?esc(prevS.title):''}</a>
+      <a href="#songs">🎵 노래 목록</a>
+      <a href="#${nextS?nextS.id:''}" class="${nextS?'':'hide'}">${nextS?esc(nextS.title):''} ›</a>
+    </div>`;
 
   const sv=document.getElementById("sv"), ct=document.getElementById("ct"), bw=document.getElementById("bw"), pc=document.getElementById("pc"), sbx=document.getElementById("sbx");
   sv.addEventListener("play", ()=>{ queueToken++; if(synth) synth.cancel(); try{AUDIO.pause();}catch(e){} try{VOICE.pause();}catch(e){} });
   const stopSong = ()=>{ try{ sv.pause(); }catch(e){} };
+  sv.addEventListener("ended", ()=>{
+    try{ if(document.fullscreenElement) document.exitFullscreen(); }catch(e){}
+    try{ if(sv.webkitDisplayingFullscreen) sv.webkitExitFullscreen(); }catch(e){}
+    ct.innerHTML = '<span class="say">🎵 이제 소리를 합쳐 봐요!</span>아래 ▶ 같이 해 보기를 눌러요 👇';
+    document.getElementById("step2").scrollIntoView({behavior:"smooth", block:"start"});
+    const g=document.getElementById("guide"); g.classList.remove("nudge"); void g.offsetWidth; g.classList.add("nudge");
+  });
   let boxes=[];
   const lightOnly = k => { boxes.forEach(b=>b.classList.remove("on")); if(k>=0) boxes[k].classList.add("on"); };
   const playS = (s, rate) => s.clip ? playClips(s.clip) : say(s.say, rate||0.7);
@@ -537,14 +566,14 @@ function renderSong(p){
     if(t!==queueToken) return;
     show("🗣 이번엔 혼자 말해 봐요!", `“${esc(word)}”`); await wait(slow?3200:2200);
     if(t!==queueToken) return; lightOnly(-1);
-    show("👩 엄마가 들어 볼게요!", "");
+    show("👂 잘 들어 볼게요!", "");
     const r = await parentCheck(pc, `아이가 <b>“${esc(word)}”</b>를 잘 말했나요?`);
     if(t!==queueToken) return;
     if(r==="again"){ show("🔁 다시 해 봐요!", "▶ 같이 해 보기를 눌러요"); bw.classList.remove("show"); boxes.forEach(b=>b.classList.remove("on")); return; }
     const st=document.getElementById("ws"+wi); if(st) st.textContent="⭐";
     show("👍 잘했어요!", wi<p.words.length-1 ? "다음 단어도 해 봐요 👉" : "노래 단어를 모두 했어요!");
     const all = p.words.every((x,k)=>document.getElementById("ws"+k).textContent);
-    celebrate(word, all ? `노래 단어를 모두 합쳐서 읽었어요! 🎵` : `엄마가 칭찬해요! 소리를 합쳐서 “${esc(word)}”를 읽었어요 🔗`);
+    celebrate(word, all ? `노래 단어를 모두 합쳐서 읽었어요! 🎵` : `소리를 합쳐서 “${esc(word)}”를 읽었어요 🔗`);
   };
   document.getElementById("slow").onclick = e=>{ slow=!slow; e.currentTarget.classList.toggle("on",slow);
     const st=document.getElementById("slowtip"); st.textContent = slow ? "모든 소리와 따라 말할 시간이 천천히 나와요" : "천천히 듣고 싶을 때 눌러요"; st.classList.toggle("on",slow); };
@@ -590,6 +619,7 @@ function route(){
   let id = location.hash.replace("#","");
   if(!id && START){ id = START; START = ""; }
   CUR = "";
+  if(id==="songs"){ renderSongs(); window.scrollTo(0,0); return; }
   setMode(false); if(id==="sounds") { renderSounds(); window.scrollTo(0,0); return; }
   setMode(false); if(byId[id] && byId[id].song) renderSong(byId[id]); else if(byId[id]) renderPage(byId[id]); else renderHome();
   window.scrollTo(0,0);
