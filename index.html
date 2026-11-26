@@ -276,7 +276,7 @@ function drawPage(p){
     ${p.words.map((w,k)=>`
       <div class="card${p.single?' big':''}" data-k="${k}">
         <img src="${src(w.img)}" alt="">
-        <div class="info"><div class="word">${esc(w.w)}</div><div class="text">${markText(w)}</div><button class="listen" type="button"><span class="li">${PLAY}</span> Listen</button>${w.link?`<a class="practice" href="#${w.link}" onclick="event.stopPropagation()">${p.vocab ? "🔁 3번 따라 하기 ›" : "👆 소리 짚기 · 🔁 3번 따라 하기 ›"}</a>`:""}${w.q?`<button class="q" data-q="${k}"><span class="qp">▶</span> ${esc(w.q)} <span>Yes / No</span></button>`:""}</div>
+        <div class="info"><div class="word">${esc(w.w)}</div><div class="text">${markText(w)}</div><button class="listen" type="button"><span class="li">${PLAY}</span> Listen</button>${w.link?`<a class="practice" href="#${w.link}" onclick="event.stopPropagation()">${p.vocab ? "🔁 3번 따라 말하기 ›" : "🔁 3번 따라 말하기 + 🔤 소리 하나씩 듣기 ›"}</a>`:""}${w.q?`<button class="q" data-q="${k}"><span class="qp">▶</span> ${esc(w.q)} <span>Yes / No</span></button>`:""}</div>
       </div>`).join("")}
     ${p.practice ? `
     <div class="rep">
