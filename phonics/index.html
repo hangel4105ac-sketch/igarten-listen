@@ -483,6 +483,7 @@ function parentCheck(box, msgHtml){
 }
 
 function setMode(song){
+  const wn=document.getElementById("warn"); if(wn) wn.style.display = (!song && !synth) ? "block" : "none";
   document.title = song ? "iGarten Phonics Song" : "Wonders Words to Know · Listen";
   const ns=document.querySelectorAll(".wrap > .note");
   if(ns[0]) ns[0].style.display = song ? "none" : "";
@@ -651,6 +652,7 @@ function route(){
   stopAll(); document.querySelectorAll("video").forEach(v=>{try{v.pause();}catch(e){}}); const pe=document.getElementById("party"); if(pe) pe.classList.remove("show");
   let id = location.hash.replace("#","");
   if(!id && START){ id = START; START = ""; }
+  if(!id && ROOT) id = "songs";
   CUR = "";
   if(id==="songs"){ renderSongs(); window.scrollTo(0,0); return; }
   setMode(false); if(id==="sounds") { renderSounds(); window.scrollTo(0,0); return; }
