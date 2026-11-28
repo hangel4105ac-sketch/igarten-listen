@@ -80,10 +80,12 @@ canvas{width:100%;height:120px;border-radius:12px;background:#fff;border:1px sol
 @media (prefers-reduced-motion:no-preference){.praise img{animation:hop .6s ease-out 2}}
 @keyframes hop{50%{transform:translateY(-14px)}}
 @media (max-width:380px){.hero{grid-template-columns:1fr}.photo{height:140px}}
+.back{display:inline-flex;width:fit-content;align-items:center;min-height:44px;margin:0 0 6px;padding:0 14px;border-radius:999px;background:#fff;border:2px solid #dfe5f7;color:#0a2fa8;font-weight:700;font-size:15px;text-decoration:none}
 </style>
 </head>
 <body>
 <div class="wrap">
+  <a class="back" id="back" href="../portal.html">‹ 포털로 돌아가기</a>
   <div class="top">
     <div>
       <div class="pills"><span class="pill">Grade 1.1 · Week 1</span><span class="pill" style="background:var(--yellow);color:var(--ink)">Wonders · Words to Know</span></div>
@@ -295,6 +297,7 @@ $("next").onclick=()=>go(1);
 $("tab-hfw").onclick=()=>{tab="hfw";idx=0;render()};
 $("tab-wtk").onclick=()=>{tab="wtk";idx=0;render()};
 $("chips").onclick=e=>{const b=e.target.closest(".chip");if(b){idx=+b.dataset.i;render()}};
+$("back").onclick=e=>{if(/portal\.html/.test(document.referrer)&&history.length>1){e.preventDefault();history.back()}};
 $("slow").onclick=()=>{slow=!slow;$("slow").setAttribute("aria-pressed",slow);$("slow").textContent=slow?"천천히 듣는 중":"천천히 듣기"};
 $("praise-next").onclick=()=>{$("overlay").classList.remove("show");go(1)};
 document.addEventListener("keydown",e=>{if(e.key==="Escape")$("overlay").classList.remove("show")});
