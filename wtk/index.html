@@ -81,6 +81,7 @@ canvas{width:100%;height:120px;border-radius:12px;background:#fff;border:1px sol
 @keyframes hop{50%{transform:translateY(-14px)}}
 @media (max-width:380px){.hero{grid-template-columns:1fr}.photo{height:140px}}
 .back{display:inline-flex;width:fit-content;align-items:center;min-height:44px;margin:0 0 6px;padding:0 14px;border-radius:999px;background:#fff;border:2px solid #dfe5f7;color:#0a2fa8;font-weight:700;font-size:15px;text-decoration:none}
+.back2{display:flex;width:auto;justify-content:center;margin:18px 0 4px;min-height:52px;background:#0a2fa8;border-color:#0a2fa8;color:#fff}
 </style>
 </head>
 <body>
@@ -104,6 +105,7 @@ canvas{width:100%;height:120px;border-radius:12px;background:#fff;border:1px sol
     <button class="btn ghost" id="prev" type="button">이전 단어</button>
     <button class="btn ghost" id="next" type="button">다음 단어</button>
   </div>
+  <a class="back back2" href="../portal.html">‹ 포털로 돌아가기</a>
   <p class="note">별 표시는 이 기기에만 저장돼요. 쓰기 연습은 화면을 나가면 지워져요.</p>
 </div>
 <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="praise-title">
@@ -297,7 +299,7 @@ $("next").onclick=()=>go(1);
 $("tab-hfw").onclick=()=>{tab="hfw";idx=0;render()};
 $("tab-wtk").onclick=()=>{tab="wtk";idx=0;render()};
 $("chips").onclick=e=>{const b=e.target.closest(".chip");if(b){idx=+b.dataset.i;render()}};
-$("back").onclick=e=>{if(/portal\.html/.test(document.referrer)&&history.length>1){e.preventDefault();history.back()}};
+document.querySelectorAll(".back").forEach(el=>el.onclick=e=>{if(/portal\.html/.test(document.referrer)&&history.length>1){e.preventDefault();history.back()}});
 $("slow").onclick=()=>{slow=!slow;$("slow").setAttribute("aria-pressed",slow);$("slow").textContent=slow?"천천히 듣는 중":"천천히 듣기"};
 $("praise-next").onclick=()=>{$("overlay").classList.remove("show");go(1)};
 document.addEventListener("keydown",e=>{if(e.key==="Escape")$("overlay").classList.remove("show")});
