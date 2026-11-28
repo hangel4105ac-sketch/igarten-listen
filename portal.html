@@ -122,11 +122,17 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--yellow);outline
 .mday.now .md,.mday[aria-pressed="true"] .md{background:var(--blue);color:#fff}
 .mday.sp{background:var(--yellow-soft)}
 .mday.off .md{background:var(--ground);color:var(--muted)}.mday.off em{font-style:normal;align-self:center;margin-top:14px}
+.mcard{background:var(--paper);border-radius:16px;padding:14px;display:flex;gap:14px;align-items:flex-start}
+.mth{flex:none;width:104px;height:104px;border-radius:12px;overflow:hidden;border:0;padding:0;background:var(--ground)}
+.mth img{display:block;width:100%;height:100%;object-fit:cover}
+.mth.none{display:flex;align-items:center;justify-content:center;text-align:center;font-size:12px;line-height:1.4;color:var(--muted)}
+.mbody{min-width:0;flex:1;display:flex;flex-direction:column;gap:8px}
+.mbody .ml{display:flex;align-items:baseline;gap:8px}.mbody .ml b{font-size:14px;color:var(--blue)}.mbody .ml span{font-size:12px;color:var(--muted)}
+.mbody .mi{display:flex;flex-direction:column;gap:5px;font-size:14.5px;word-break:keep-all}
+.zoom{position:fixed;inset:0;z-index:50;background:rgba(10,16,40,.86);display:flex;align-items:center;justify-content:center;padding:16px;border:0}
+.zoom img{max-width:min(100%,560px);max-height:86vh;border-radius:14px;display:block}
+.zoom span{position:absolute;top:14px;right:16px;color:#fff;font-size:15px;font-weight:700}
 .mcards{display:flex;flex-direction:column;gap:12px}
-.mcard{background:var(--paper);border-radius:16px;overflow:hidden}
-.mcard img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover}
-.mcard .nophoto{background:var(--ground);margin:12px 12px 0;border-radius:12px;padding:14px;font-size:12.5px;color:var(--muted);text-align:center}
-.mcard .mrow{border-top:0}
 .past{align-self:flex-start;border:2px solid var(--line);background:var(--paper);border-radius:999px;padding:6px 14px;min-height:40px;font-weight:500}
 .past[aria-pressed="true"]{border-color:var(--blue);background:var(--blue);color:#fff;font-weight:700}
 .cal{background:var(--paper);border-radius:16px;padding:12px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;text-align:center}
@@ -431,8 +437,8 @@ let mealIso = null;
 /* 오늘 식단이 있으면 오늘, 없으면 가장 최근에 급식한 날(사진이 올라온 날)을 먼저 보여준다. */
 function mealDefault() { const t = todayIso(), open = MEAL.days.filter(d => !d.closed), past = open.filter(d => d.iso <= t); return (past.length ? past[past.length - 1] : open[0]).iso; }
 function mealCard(label, kcal, list, photo, isPast) {
-  const pic = photo ? `<img src="${photo}" alt="${label} 사진">` : `<div class="nophoto">${isPast ? "등록된 사진이 없습니다." : "사진은 급식 후에 올라옵니다."}</div>`;
-  return `<div class="mcard">${pic}<div class="mrow"><div class="ml"><b>${label}</b><span>${kcal ? esc(kcal) + "kcal" : ""}</span></div><div class="mi">${mealItems(list)}</div></div></div>`;
+  const pic = photo ? `<button type="button" class="mth" data-zoom="${photo}" aria-label="${label} 사진 크게 보기"><img src="${photo}" alt="${label} 사진"></button>` : `<div class="mth none">${isPast ? "사진 없음" : "급식 후<br>사진 등록"}</div>`;
+  return `<div class="mcard">${pic}<div class="mbody"><div class="ml"><b>${label}</b>${kcal ? `<span>${esc(kcal)}kcal</span>` : ""}</div><div class="mi">${mealItems(list)}</div></div></div>`;
 }
 function mealItems(list) { return list.map(x => `<div>${esc(x.n)}${x.a.length ? `<span class="al">${esc(x.a.join(" · "))}</span>` : ""}</div>`).join(""); }
 function renderMeal() {
@@ -467,6 +473,7 @@ function renderMeal() {
 }
 $("meal-month").onclick = e => { const b = e.target.closest("button[data-iso]"); if (!b) return; mealIso = b.dataset.iso; renderMeal(); window.scrollTo(0, 0); };
 $("meal-past").onclick = e => { const b = e.target.closest("button[data-iso]"); if (!b) return; mealIso = b.dataset.iso; renderMeal(); window.scrollTo(0, 0); };
+$("meal-day").onclick = e => { const b = e.target.closest("[data-zoom]"); if (!b) return; const z = document.createElement("button"); z.type = "button"; z.className = "zoom"; z.innerHTML = `<span>닫기</span><img src="${b.dataset.zoom}" alt="급식 사진 크게 보기">`; z.onclick = () => z.remove(); document.body.appendChild(z); z.focus(); };
 $("meal-cal").onclick = e => { const b = e.target.closest("button[data-iso]"); if (!b) return; mealIso = b.dataset.iso; renderMeal(); window.scrollTo(0, 0); };
 /* ----- 화면 이동: 로그인 직후에는 과제 · 진도만 보이고, 나머지는 "전체 메뉴"에서 고른다 ----- */
 const TITLES = { "v-staff": "교직원", "v-plan": "과제 · 진도", "v-menu": "전체 메뉴", "v-notes": "알림장", "v-med": "투약의뢰서", "v-meal": "식단", "v-learn": "학습", "v-class": "우리 반" };
