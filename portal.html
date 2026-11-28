@@ -89,6 +89,8 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--yellow);outline
 .nav button{border:0;background:none;min-height:50px;border-radius:12px;font-size:13px;font-weight:500;color:var(--muted)}
 .nav button[aria-current="page"]{background:var(--blue-soft);color:var(--blue);font-weight:700}
 .rows{background:var(--paper);border-radius:16px;display:flex;flex-direction:column}
+.hw-go{margin-top:14px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-radius:12px;background:#eef2ff;color:inherit;text-decoration:none;min-height:52px}
+.hw-go b{display:block;font-size:14.5px}.hw-go small{display:block;font-size:12.5px;opacity:.7;margin-top:2px}
 .rowlink{padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid var(--line);color:inherit;text-decoration:none;min-height:52px}
 .rowlink:first-child{border-top:0}
 .rowlink .rt{display:flex;flex-direction:column;gap:2px;min-width:0}
@@ -393,6 +395,7 @@ function render() {
   if (d.hw.items.length) h += `<ol class="hw">${d.hw.items.map(x => `<li>${esc(x)}</li>`).join("")}</ol>`;
   else if (d.hw.plain) h += `<p class="plain">${esc(d.hw.plain)}</p>`;
   else h += `<p class="hint" style="text-align:left">등록된 과제가 없습니다.</p>`;
+  if (d.hw.items.length || d.hw.plain) h += `<a class="hw-go" href="wtk/" target="_blank" rel="noopener"><span><b>Wonders Words to Know</b><small>온라인 과제 바로 하기</small></span><span class="go">열기</span></a>`;
   $("hw-card").innerHTML = h;
   const qs = wk.filter(x => x.quizzes.length);
   $("quiz").hidden = !qs.length;
